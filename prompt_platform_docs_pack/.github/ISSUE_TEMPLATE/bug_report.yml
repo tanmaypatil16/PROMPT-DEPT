@@ -1,0 +1,39 @@
+name: Bug report
+description: Report a reproducible problem in the prompt platform.
+title: "bug: "
+labels: ["bug"]
+body:
+  - type: textarea
+    id: summary
+    attributes:
+      label: What happened?
+      description: Describe the unexpected behavior.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Steps to reproduce
+      placeholder: "1. Open… 2. Select… 3. Observe…"
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: Browser, OS, branch/commit, and relevant configuration (never paste secrets).
+    validations:
+      required: false
+  - type: textarea
+    id: logs
+    attributes:
+      label: Errors or screenshots
+      description: Redact tokens, email addresses, private content and provider credentials.
+    validations:
+      required: false

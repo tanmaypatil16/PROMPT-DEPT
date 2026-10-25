@@ -1,0 +1,48 @@
+name: Feature request
+description: Propose a product capability or improvement.
+title: "feature: "
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: User problem
+      description: What real user problem would this solve?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed behavior
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance criteria
+      placeholder: "- [ ] Given… when… then…"
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: Product area
+      options:
+        - Prompt library/search
+        - Prompt Builder
+        - Talk to Prompt / voice
+        - Exam answers / education
+        - Notes and documents
+        - Workspace/authentication
+        - Community/admin
+        - Security/privacy
+        - Infrastructure/testing
+    validations:
+      required: true
+  - type: textarea
+    id: risks
+    attributes:
+      label: Data, privacy or security impact
+      description: Note any new file, AI provider, permission, cost, or retention requirements.
+    validations:
+      required: false

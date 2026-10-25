@@ -1,0 +1,20 @@
+Priority,Phase,Task,Acceptance summary,Status
+P0,Phase 0,Audit repository and current Git status,"Audit existing repo, preserve existing work and record baseline",NOT STARTED
+P0,Phase 0,Integrate project docs and agent instructions,Add AGENTS.md and docs without overwriting valuable files,NOT STARTED
+P0,Phase 1,Implement design tokens and reusable UI primitives,"Accessible buttons, inputs, typography, borders and layout",NOT STARTED
+P0,Phase 1,Build responsive site shell and homepage,"Functional navigation, hero, search entry and category entry points",NOT STARTED
+P0,Phase 2,Create prompt/category/tag schema and seed data,Migration and repeatable safe seed script,NOT STARTED
+P0,Phase 2,Build public prompt discovery,"Search, category filters, detail pages and copy action",NOT STARTED
+P0,Phase 3,Define shared intent schema and prompt composer,Validated input schema and unit tests,NOT STARTED
+P0,Phase 3,Build typed Prompt Builder,"Dynamic task fields, editable summary, preview and copy",NOT STARTED
+P0,Phase 4,Build voice input and transcript review,"Permission, feature detection, correction and text fallback",NOT STARTED
+P0,Phase 4,Connect voice and text into shared intent flow,Clarifications and editable requirement summary,NOT STARTED
+P0,Phase 5,Select AI provider and implement adapter,Provider choice recorded; secrets server-only,NOT STARTED
+P0,Phase 5,Add model response validation and usage limits,"Handle malformed responses, timeouts, errors and quotas",NOT STARTED
+P0,Phase 6,Integrate authentication,Use existing auth or choose/document a supported solution,NOT STARTED
+P0,Phase 6,Build favorites and personal collections,Owner checks and tests,NOT STARTED
+P0,Phase 7,Implement secure private document upload,"Allowlist, size limits, storage status and owner checks",NOT STARTED
+P0,Phase 7,Add extraction and notes workflow modes,Reusable prompt vs direct explanation clearly separated,NOT STARTED
+P0,Phase 8,Complete critical tests and release checklist,"Unit, integration, E2E, security, accessibility and build",NOT STARTED
+P1,Phase 9,Add prompt submissions and moderation,Pending/review/publish workflows and admin authorization,NOT STARTED
+P2,Phase 10,Evaluate semantic search or advanced workflows,Only if MVP data demonstrates a need,NOT STARTED

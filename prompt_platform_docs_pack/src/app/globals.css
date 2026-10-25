@@ -1,0 +1,71 @@
+@import "tailwindcss";
+
+:root {
+  --night: #080808;
+  --surface: #181818;
+  --input: #1e1e1e;
+  --border: #373737;
+  --border-strong: #505050;
+  --text: #ffffff;
+  --muted: #959595;
+  --secondary: var(--muted);
+  --accent: #1d9bf0;
+  --brand-gradient: linear-gradient(97.25deg, #b8ff45 3%, #ffcb45 22%, #ff00b8 100%);
+  color-scheme: dark;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  background: var(--night);
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--night);
+  color: var(--text);
+  font-family: var(--font-inter), Inter, sans-serif;
+  margin: 0;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+.skip-link {
+  background: var(--text);
+  color: var(--night);
+  font-weight: 600;
+  left: 1rem;
+  padding: .7rem 1rem;
+  position: fixed;
+  top: -5rem;
+  z-index: 100;
+}
+
+.skip-link:focus {
+  top: 1rem;
+}

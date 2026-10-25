@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Project documentation
+    url: https://github.com/
+    about: Replace this placeholder with the actual repository URL when known.

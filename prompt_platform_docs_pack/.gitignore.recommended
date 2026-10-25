@@ -1,0 +1,16 @@
+# Merge these entries into your project's existing .gitignore; do not overwrite it blindly.
+node_modules/
+.next/
+coverage/
+dist/
+build/
+.env
+.env.*
+!.env.example
+*.log
+.DS_Store
+Thumbs.db
+# Local uploads and extracted private user content
+storage/
+uploads/
+private-uploads/
