@@ -70,7 +70,7 @@
 - [ ] Actual application repository, branch, and Git status (not present in this directory).
 - [ ] Selected repository name/URL.
 - [ ] Final product name/visual branding.
-- [ ] Database provisioned and migrations run.
+- [x] Database provisioned and migrations run.
 - [ ] Authentication provider selected/configured.
 - [ ] AI provider/model selected/configured.
 - [ ] Speech transcription support verified in target browsers.
@@ -85,6 +85,7 @@ The following records the audited baseline and the actual Phase 1 verification r
 
 | Date | Command/check | Result | Notes |
 |---|---|---|---|
+| 2026-10-25 | Supabase SQL Editor — `supabase/RUN_IN_SQL_EDITOR.sql` | Pass | Applied the schema and seed data; verified 19 public tables, 9 categories, 2 subscription plans, the public catalog view, and RLS on `prompts`. |
 | 2026-10-24 | `npm run typecheck` | Pass | TypeScript check passed after implementing the supplied forest-green and warm-paper palette. |
 | 2026-10-24 | `npm run build` | Pass | Production build completed successfully after the palette change. |
 | 2026-10-24 | `npm run lint` | Fail (unrelated existing issue) | ESLint reports `react-hooks/set-state-in-effect` in `src/components/prompt-card.tsx:18`; no files implicated in the palette update. |

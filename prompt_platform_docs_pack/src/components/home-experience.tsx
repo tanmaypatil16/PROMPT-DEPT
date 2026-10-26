@@ -6,6 +6,7 @@ import { ArrowRight, ArrowUpRight, Menu, Search, X } from "lucide-react";
 import { promptCategories, promptSamples, type PromptSample } from "@/data/prompts";
 import "./home-experience.module.css";
 import { PromptCard } from "./prompt-card";
+import { trackEvent } from "@/lib/analytics/client";
 
 const showcasePrompts = promptSamples.filter((prompt) =>
   ["a-world-in-motion", "architecture-in-between", "editorial-product-photography"].includes(prompt.id),
@@ -121,7 +122,17 @@ export function HomeExperience() {
 
   function showGallery(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    if (query.trim()) {
+      trackEvent("search_performed", { properties: { queryLength: query.trim().length, source: "hero" } });
+    }
     document.getElementById("gallery")?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
+  function selectCategory(item: (typeof promptCategories)[number]) {
+    setCategory(item);
+    if (item !== "All") {
+      trackEvent("category_selected", { properties: { category: item } });
+    }
   }
 
   function closeMenu() {
@@ -150,7 +161,6 @@ export function HomeExperience() {
         >
           <a href="#gallery" onClick={closeMenu}>Explore</a>
           <a href="#how-it-works" onClick={closeMenu}>How it works</a>
-          <a href="/studio" onClick={closeMenu}>Prompt Studio</a>
         </nav>
         <a className="nav-cta" href="/studio">Build a prompt <ArrowUpRight aria-hidden="true" /></a>
       </header>
@@ -196,7 +206,7 @@ export function HomeExperience() {
               className={category === item ? "selected" : ""}
               key={item}
               aria-pressed={category === item}
-              onClick={() => setCategory(item)}
+              onClick={() => selectCategory(item)}
             >
               {item}
             </button>

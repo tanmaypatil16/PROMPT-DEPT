@@ -1,0 +1,213 @@
+.shell {
+  min-height: 100vh;
+  background: var(--night);
+  color: var(--text);
+}
+
+.header {
+  align-items: center;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  justify-content: space-between;
+  padding: 1rem 1.5rem;
+}
+
+.nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .75rem 1.25rem;
+}
+
+.nav a {
+  color: var(--muted);
+  font-size: .9rem;
+}
+
+.nav a[data-active="true"] {
+  color: var(--text);
+  font-weight: 600;
+}
+
+.main {
+  margin: 0 auto;
+  max-width: 1200px;
+  padding: 1.5rem;
+}
+
+.grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+}
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1rem;
+}
+
+.card span {
+  color: var(--muted);
+  display: block;
+  font-size: .75rem;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+}
+
+.card strong {
+  display: block;
+  font-size: 1.6rem;
+  margin-top: .35rem;
+}
+
+.tableWrap {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: auto;
+}
+
+.table {
+  border-collapse: collapse;
+  min-width: 640px;
+  width: 100%;
+}
+
+.table th,
+.table td {
+  border-bottom: 1px solid var(--border);
+  padding: .65rem .85rem;
+  text-align: left;
+  vertical-align: top;
+}
+
+.table th {
+  background: var(--surface);
+  color: var(--muted);
+  font-size: .75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.badge {
+  border-radius: 999px;
+  display: inline-block;
+  font-size: .72rem;
+  font-weight: 600;
+  padding: .2rem .55rem;
+}
+
+.badgeDraft { background: #333; }
+.badgePublished { background: #1a4d2e; color: #b8ff45; }
+.badgePending { background: #4a3a12; color: #ffcb45; }
+.badgePremium { background: #3a124a; color: #ff9de6; }
+
+.form {
+  display: grid;
+  gap: 1rem;
+  max-width: 720px;
+}
+
+.form label {
+  display: grid;
+  gap: .35rem;
+}
+
+.form input,
+.form select,
+.form textarea {
+  background: var(--input);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text);
+  padding: .6rem .75rem;
+}
+
+.form textarea {
+  min-height: 160px;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .75rem;
+}
+
+.btn {
+  background: var(--text);
+  border: none;
+  border-radius: 999px;
+  color: var(--night);
+  font-weight: 600;
+  padding: .55rem 1.1rem;
+}
+
+.btnGhost {
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  color: var(--text);
+  padding: .55rem 1.1rem;
+}
+
+.empty {
+  background: var(--surface);
+  border: 1px dashed var(--border);
+  border-radius: 12px;
+  color: var(--muted);
+  padding: 2rem;
+  text-align: center;
+}
+
+.chartBox {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  margin-top: 1rem;
+  min-height: 260px;
+  padding: 1rem;
+}
+
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .5rem;
+  margin-bottom: 1rem;
+}
+
+.filters button {
+  background: var(--input);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  color: var(--muted);
+  padding: .35rem .85rem;
+}
+
+.filters button[data-selected="true"] {
+  border-color: var(--text);
+  color: var(--text);
+}
+
+.loginPage {
+  align-items: center;
+  display: grid;
+  min-height: 100vh;
+  place-items: center;
+  padding: 1.5rem;
+}
+
+.loginCard {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  max-width: 420px;
+  padding: 2rem;
+  width: 100%;
+}
+
+.error {
+  color: #ff7a7a;
+  font-size: .9rem;
+}

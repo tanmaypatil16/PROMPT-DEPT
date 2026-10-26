@@ -4,7 +4,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { ArrowLeft, Check, Copy } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { trackEvent } from "@/lib/analytics/client";
 import type { PromptSample } from "@/data/prompts";
 import styles from "./page.module.css";
 
@@ -14,6 +15,7 @@ export default function PromptDetailPage() {
   const [status, setStatus] = useState<"loading" | "missing" | "error" | "ready">("loading");
   const [copied, setCopied] = useState(false);
   const [copyError, setCopyError] = useState<string | null>(null);
+  const viewedRef = useRef<string | null>(null);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -22,6 +24,10 @@ export default function PromptDetailPage() {
       if (!response.ok) throw new Error("Unable to load prompt");
       const data = await response.json() as { prompt: PromptSample };
       setPrompt(data.prompt); setStatus("ready");
+      if (viewedRef.current !== params.id) {
+        viewedRef.current = params.id;
+        trackEvent("prompt_view", { promptSlug: params.id });
+      }
     }).catch((error: unknown) => { if (!(error instanceof Error) || error.name !== "AbortError") setStatus("error"); });
     return () => controller.abort();
   }, [params.id]);
@@ -31,6 +37,7 @@ export default function PromptDetailPage() {
     setCopyError(null);
     try {
       await navigator.clipboard.writeText(prompt.prompt);
+      trackEvent("prompt_copy", { promptSlug: prompt.id, properties: { initiated: true } });
       setCopied(true);
       window.setTimeout(() => setCopied(false), 2200);
     } catch {

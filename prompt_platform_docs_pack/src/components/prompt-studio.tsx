@@ -5,6 +5,7 @@ import Link from "next/link";
 import { ArrowRight, ArrowUpRight, Menu, X } from "lucide-react";
 import { promptCategories } from "@/data/prompts";
 import "./home-experience.module.css";
+import { trackEvent } from "@/lib/analytics/client";
 
 const studioCategories = promptCategories.filter((category) => category !== "All");
 const studioFormats = ["Detailed creative brief", "Image-generation prompt", "Website concept", "Step-by-step plan", "Study guide"];
@@ -38,6 +39,7 @@ export function PromptStudio() {
     setStudioError(null);
     setStudioCopyError(null);
     setStudioResult("");
+    trackEvent("prompt_studio_started", { properties: { category: studioCategory } });
     try {
       const response = await fetch("/api/studio", {
         method: "POST",
@@ -50,7 +52,9 @@ export function PromptStudio() {
       }
       setStudioResult(data.prompt);
       setStudioNotice(data.notice ?? "");
+      trackEvent("prompt_generation_completed", { properties: { category: studioCategory } });
     } catch (error) {
+      trackEvent("prompt_generation_failed", { properties: { category: studioCategory } });
       setStudioError(error instanceof Error ? error.message : "Prompt Studio could not generate a draft.");
     } finally {
       setStudioLoading(false);
@@ -79,7 +83,6 @@ export function PromptStudio() {
         >
           <Link href="/#gallery" onClick={() => setMenuOpen(false)}>Explore</Link>
           <Link href="/#how-it-works" onClick={() => setMenuOpen(false)}>How it works</Link>
-          <Link href="/studio" aria-current="page" onClick={() => setMenuOpen(false)}>Prompt Studio</Link>
         </nav>
         <Link className="nav-cta" href="/#gallery">Explore prompts <ArrowUpRight aria-hidden="true" /></Link>
       </header>
