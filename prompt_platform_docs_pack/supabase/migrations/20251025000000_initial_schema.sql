@@ -46,6 +46,7 @@ CREATE TABLE public.prompts (
   author_id UUID REFERENCES public.profiles (id) ON DELETE SET NULL,
   preview_image_url TEXT,
   preview_image_storage_path TEXT,
+  preview_url TEXT,
   task_type TEXT,
   status TEXT NOT NULL DEFAULT 'draft' CHECK (status IN ('draft', 'pending_review', 'published', 'rejected', 'archived')),
   visibility TEXT NOT NULL DEFAULT 'public' CHECK (visibility IN ('public', 'private')),

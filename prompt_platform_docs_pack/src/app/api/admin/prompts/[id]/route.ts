@@ -4,6 +4,7 @@ import { requireAdmin } from "@/lib/auth/session";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { computeContentHash, slugify } from "@/lib/prompts/hash";
 import { logAdminAction } from "@/lib/admin/audit";
+import { isAllowedPreviewUrl, sanitizePreviewUrl } from "@/lib/prompts/preview-url";
 
 const updateSchema = z.object({
   title: z.string().min(1).max(300).optional(),
@@ -12,6 +13,7 @@ const updateSchema = z.object({
   prompt_text: z.string().min(1).max(50000).optional(),
   category_id: z.string().uuid().nullable().optional(),
   preview_image_url: z.string().url().max(2000).nullable().optional(),
+  preview_url: z.string().url().max(2000).nullable().optional(),
   status: z.enum(["draft", "pending_review", "published", "rejected", "archived"]).optional(),
   access_tier: z.enum(["free", "premium"]).optional(),
   is_featured: z.boolean().optional(),
@@ -64,6 +66,13 @@ export async function PATCH(request: Request, context: { params: Promise<{ id: s
   if (!parsed.success) return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 });
 
   const patch = { ...parsed.data } as Record<string, unknown>;
+  if ("preview_url" in patch) {
+    const previewUrl = typeof patch.preview_url === "string" ? patch.preview_url : null;
+    if (previewUrl && !isAllowedPreviewUrl(previewUrl)) {
+      return NextResponse.json({ error: "Preview URL must use an approved HTTPS preview host." }, { status: 400 });
+    }
+    patch.preview_url = sanitizePreviewUrl(previewUrl);
+  }
   if (patch.prompt_text) patch.content_hash = computeContentHash(String(patch.prompt_text));
   if (patch.title && !patch.slug) patch.slug = slugify(String(patch.title));
   if (patch.status === "published") patch.published_at = new Date().toISOString();

@@ -166,6 +166,12 @@ export function HomeExperience() {
       </header>
 
       <section className="hero" id="content" aria-labelledby="hero-title">
+        <div className="hero-video-panel" aria-hidden="true">
+          <video className="hero-video" autoPlay loop muted playsInline tabIndex={-1}>
+            <source src="/hero-background.mp4" type="video/mp4" />
+          </video>
+          <div className="hero-video-shade" />
+        </div>
         <HeroObjects />
         <div className="hero-layout">
           <div className="hero-copy">

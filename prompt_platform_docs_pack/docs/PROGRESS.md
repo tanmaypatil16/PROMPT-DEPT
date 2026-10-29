@@ -4,10 +4,19 @@
 
 ## Current status
 
-- **Overall status:** `PHASE 1 IMPLEMENTED / AUTOMATED BASELINE PASSED / MANUAL UI REVIEW PENDING`
-- **Application implementation status:** `Next.js App Router source created; public homepage implemented`
-- **Current phase:** Phase 1 — visual foundation and public shell
-- **Last updated:** 2026-10-24
+## Aureus website preview — 2026-10-29
+
+- Added nullable `prompts.preview_url` migration and admin support.
+- Added server-side preview-origin allowlisting for HTTPS Google Sites URLs and responsive iframe rendering with an external fallback link.
+- Target prompt: `wealth-video-hero` (Wealth Video Hero).
+- Google Sites publishes `X-Frame-Options: DENY` and limits `frame-ancestors`, so iframe embedding is expected to be blocked; the Open full preview path remains functional.
+- Database migration and single-record association require the migration to be applied in Supabase first; the current environment does not expose database credentials or a linked Supabase CLI project, so neither database write was executed.
+
+
+- **Overall status:** `PHASE 1 IMPLEMENTED / TRUSTED REVIEW-STATE FOUNDATION AUTHORED / MIGRATION NOT APPLIED / NO IMPORT EXECUTION ENABLED`
+- **Application implementation status:** `Server review endpoint verifies commit-pinned source bytes and prepares atomic review-state/audit persistence; database migration is additive and unapplied`
+- **Current phase:** GitHub prompt import completed as drafts
+- **Last updated:** 2026-10-27
 - **Current owner:** Project owner + AI coding assistant
 - **Repository URL:** `TBD`
 - **Live deployment URL:** `TBD`
@@ -61,6 +70,16 @@
 - [x] Created phased implementation roadmap and copy-paste coding-agent prompts.
 - [x] Added GitHub issue/PR templates to the documentation pack.
 
+## SitePrompt review-state foundation — 2026-10-27
+
+- Added the additive migration `supabase/migrations/20261027000000_import_source_review_state.sql`. It defines one current review row per repository/path, stores the full source commit and server-computed SHA-256, reviewer, status, rationale, and timestamps, applies constraints and admin-only RLS for reads, and provides an atomic RPC that writes state plus the audit event in one transaction.
+- The review endpoint uses `requireAdmin()`, accepts only the configured upstream repository and safe Markdown paths at full 40-character commit SHAs, fetches the exact raw GitHub file server-side without following redirects, and computes the hash from response bytes. Reviewer identity comes only from the authenticated session; client-supplied hash, identity, reviewer, rights, and manifest approval fields are rejected.
+- Concurrent updates use a server-read `updated_at` compare-and-swap in the transactional RPC. Exact retries are idempotent; source hash changes invalidate prior status and return the record to `requires_review`; invalid transitions and audit failures fail without success.
+- Scope remains review-only. An `approved` status is a human review decision, not rights verification. The RPC records `rights_independently_verified: false`; import execution, prompts, media, and publication are not touched.
+- Migration was created but **not applied**. Until it is applied through the normal reviewed migration process, the new persistence endpoint cannot operate against the database.
+- Verification on 2026-10-27: `npm run lint` passed with 0 warnings; `npm run typecheck -- --pretty false` passed; focused Vitest run passed 3 files / 19 tests. Vitest emitted a non-fatal Vite native config-loader warning.
+- Remaining limitation: source-author identity is not part of the upstream manifest, so the system binds a decision to source bytes and the authenticated active administrator but cannot independently establish who authored the source or whether redistribution is legally permitted.
+
 ## Verified and still pending
 
 - [x] Documentation-pack file structure and Git baseline inspected.
@@ -77,7 +96,8 @@
 - [ ] Object storage provider and file-size limits selected.
 - [ ] Deployment environment configured.
 - [x] Lint, type checks, and production build run against the actual app.
-- [ ] Automated unit and end-to-end tests (deferred until Vitest and Playwright are introduced in later work).
+- [x] Focused import-safety tests pass for manifest validation and parser behavior.
+- [ ] Automated end-to-end tests (deferred until Playwright or a higher-level harness is introduced in later work).
 
 ## Verification log
 
@@ -85,10 +105,17 @@ The following records the audited baseline and the actual Phase 1 verification r
 
 | Date | Command/check | Result | Notes |
 |---|---|---|---|
+| 2026-10-27 | `npm run lint` | Pass | Review-state changes lint clean with 0 warnings. |
+| 2026-10-27 | `npm run typecheck -- --pretty false` | Pass | TypeScript check passed for the review-state endpoint and source verifier. |
+| 2026-10-27 | `npx vitest run src/lib/import/manifest.test.ts src/lib/import/review.test.ts src/lib/import/source-verification.test.ts` | Pass | Three files and 19 tests passed; Vitest emitted one non-fatal native config-loader warning. |
+| 2026-10-27 | Supabase migration `20261027000000_import_source_review_state.sql` | Not applied | Additive review-state table/RPC proposed and implemented in source only; no database was modified. |
+| 2026-10-26 | `npm run lint` | Pass | ESLint passed after fixing the admin prompt page effect and the import route nullability warnings. |
+| 2026-10-26 | `npm run typecheck -- --pretty false` | Pass | TypeScript passes after tightening `db` handling in the admin import route. |
+| 2026-10-26 | `npx vitest run src/lib/import/manifest.test.ts src/lib/import/parse-records.test.ts` | Pass | Six import-safety tests passed: manifest validation and parser behavior are covered. |
 | 2026-10-25 | Supabase SQL Editor — `supabase/RUN_IN_SQL_EDITOR.sql` | Pass | Applied the schema and seed data; verified 19 public tables, 9 categories, 2 subscription plans, the public catalog view, and RLS on `prompts`. |
 | 2026-10-24 | `npm run typecheck` | Pass | TypeScript check passed after implementing the supplied forest-green and warm-paper palette. |
 | 2026-10-24 | `npm run build` | Pass | Production build completed successfully after the palette change. |
-| 2026-10-24 | `npm run lint` | Fail (unrelated existing issue) | ESLint reports `react-hooks/set-state-in-effect` in `src/components/prompt-card.tsx:18`; no files implicated in the palette update. |
+| 2026-10-24 | `npm run lint` | Fail (unrelated existing issue) | ESLint reported a `react-hooks/set-state-in-effect` warning in the admin prompts page and the admin import route; both issues were fixed in the current change. |
 | 2026-10-16 | Documentation pack creation | Prepared | No application code was inspected or executed |
 | 2026-10-16 | `Get-ChildItem -Force` | Pass | Confirmed only documentation-pack content: `.github/`, `docs/`, `AGENTS.md`, `README.md`, `PACK_MANIFEST.md`, and `.gitignore.recommended`. |
 | 2026-10-16 | `rg --files -g "!docs/**" -g "!README.md" -g "!AGENTS.md" -g "!.github/**"` | Pass | No application source, package manifest, test configuration, or build configuration found. |

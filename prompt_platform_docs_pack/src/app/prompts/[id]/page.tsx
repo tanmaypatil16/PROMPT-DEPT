@@ -51,7 +51,14 @@ export default function PromptDetailPage() {
   return <main className={styles.page}>
     <header className={styles.header}><Link className="wordmark" href="/">PROMPT<span>/</span>DEPT.</Link><Link className={styles.back} href="/"><ArrowLeft aria-hidden="true" /> Back to library</Link></header>
     <article className={styles.detail}>
-      <div className={styles.artwork}><Image src={prompt.image} alt={prompt.title} fill priority sizes="(max-width: 760px) 100vw, 45vw" unoptimized /></div>
+      <div className={prompt.preview_url ? styles.preview : styles.artwork}>
+        {prompt.preview_url ? (
+          <>
+            <iframe src={prompt.preview_url} title={`${prompt.title} website preview`} loading="lazy" referrerPolicy="strict-origin-when-cross-origin" sandbox="allow-scripts allow-same-origin allow-popups allow-forms" />
+            <a className={styles.previewLink} href={prompt.preview_url} target="_blank" rel="noopener noreferrer">Open full preview <span aria-hidden="true">↗</span></a>
+          </>
+        ) : <Image src={prompt.image} alt={prompt.title} fill priority sizes="(max-width: 760px) 100vw, 45vw" unoptimized />}
+      </div>
       <div className={styles.copy}><p className="eyebrow">{prompt.category}</p><h1>{prompt.title}</h1><p className={styles.description}>{prompt.description}</p><div className={styles.tags}>{prompt.tags.map((tag) => <span key={tag}>{tag}</span>)}</div><section className={styles.promptText} aria-labelledby="prompt-text-title"><p className="mono-label" id="prompt-text-title">Reusable prompt</p><p>{prompt.prompt}</p><button type="button" onClick={copyPrompt}>{copied ? <><Check aria-hidden="true" /> Copied</> : <><Copy aria-hidden="true" /> Copy prompt</>}</button>{copyError && <p className={styles.copyError} role="alert">{copyError}</p>}</section><p className={styles.note}>Local sample prompt. Copy it into the AI tool of your choice and adapt it to your project.</p></div>
     </article>
   </main>;

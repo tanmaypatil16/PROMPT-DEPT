@@ -28,7 +28,7 @@ export async function POST(request: Request) {
 
   const { sourceType, fieldMapping, originalFilename } = parsed.data;
   let content = parsed.data.content ?? "";
-  let sourceUrl: string | null = parsed.data.githubUrl ?? null;
+  const sourceUrl: string | null = parsed.data.githubUrl ?? null;
 
   if (sourceType === "github") {
     const url = parsed.data.githubUrl;
@@ -61,7 +61,7 @@ export async function POST(request: Request) {
 
   let imported = 0;
   let duplicate = 0;
-  let invalid = parsedRecords.invalid.length;
+  const invalid = parsedRecords.invalid.length;
   let failed = 0;
 
   for (const inv of parsedRecords.invalid) {
@@ -74,16 +74,16 @@ export async function POST(request: Request) {
   }
 
   const categoryCache = new Map<string, string>();
-  async function categoryIdFor(name?: string) {
+  async function categoryIdFor(name: string | undefined, supabaseDb: NonNullable<ReturnType<typeof createAdminClient>>) {
     if (!name) return null;
     const slug = slugify(name);
     if (categoryCache.has(slug)) return categoryCache.get(slug)!;
-    const { data: existing } = await db.from("categories").select("id").eq("slug", slug).maybeSingle();
+    const { data: existing } = await supabaseDb.from("categories").select("id").eq("slug", slug).maybeSingle();
     if (existing?.id) {
       categoryCache.set(slug, existing.id);
       return existing.id;
     }
-    const { data: created } = await db.from("categories").insert({ name, slug, is_active: true }).select("id").single();
+    const { data: created } = await supabaseDb.from("categories").insert({ name, slug, is_active: true }).select("id").single();
     if (created?.id) categoryCache.set(slug, created.id);
     return created?.id ?? null;
   }
@@ -104,7 +104,7 @@ export async function POST(request: Request) {
         continue;
       }
 
-      const category_id = await categoryIdFor(record.category);
+      const category_id = await categoryIdFor(record.category, db);
       const source_type = sourceType === "github" ? "github_import" : sourceType === "csv" ? "csv_import" : "json_import";
       const { data: inserted, error } = await db
         .from("prompts")

@@ -12,6 +12,7 @@ export type PromptFormValues = {
   prompt_text: string;
   category_id: string;
   preview_image_url: string;
+  preview_url: string;
   status: string;
   access_tier: string;
   is_featured: boolean;
@@ -28,6 +29,7 @@ const defaults: PromptFormValues = {
   prompt_text: "",
   category_id: "",
   preview_image_url: "",
+  preview_url: "",
   status: "draft",
   access_tier: "free",
   is_featured: false,
@@ -63,6 +65,7 @@ export function PromptForm({
       ...values,
       category_id: values.category_id || null,
       preview_image_url: values.preview_image_url || null,
+      preview_url: values.preview_url || null,
       source_url: values.source_url || null,
       source_license: values.source_license || null,
       attribution: values.attribution || null,
@@ -96,6 +99,7 @@ export function PromptForm({
       </label>
       <label>Tags (comma-separated)<input value={values.tag_names} onChange={(e) => setValues({ ...values, tag_names: e.target.value })} /></label>
       <label>Preview image URL<input value={values.preview_image_url} onChange={(e) => setValues({ ...values, preview_image_url: e.target.value })} /></label>
+      <label>Website preview URL (approved HTTPS host)<input value={values.preview_url} onChange={(e) => setValues({ ...values, preview_url: e.target.value })} placeholder="https://sites.google.com/..." /></label>
       <label>Status
         <select value={values.status} onChange={(e) => setValues({ ...values, status: e.target.value })}>
           <option value="draft">Draft</option>

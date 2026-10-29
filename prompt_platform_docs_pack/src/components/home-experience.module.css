@@ -80,13 +80,66 @@
 }
 
 :global(.hero) {
-  width: 100%;
+  align-items: center;
+  display: flex;
+  isolation: isolate;
+  min-height: min(760px, calc(100vh - 72px));
+  overflow: hidden;
   padding: clamp(4rem, 9vw, 7rem) clamp(1rem, 7vw, 6.5rem) clamp(3rem, 6vw, 5rem);
+  position: relative;
+  width: 100%;
+}
+
+:global(.hero-video-panel) {
+  background: var(--night);
+  border: 1px solid rgb(255 255 255 / .08);
+  border-radius: clamp(1rem, 2vw, 1.75rem);
+  bottom: clamp(1.75rem, 3vw, 2.75rem);
+  left: clamp(.75rem, 1.5vw, 1.75rem);
+  max-width: 1420px;
+  overflow: hidden;
+  pointer-events: none;
+  position: absolute;
+  right: clamp(.75rem, 1.5vw, 1.75rem);
+  top: clamp(.75rem, 1.5vw, 1.5rem);
+  z-index: -1;
+}
+
+:global(.hero-video),
+:global(.hero-video-shade) {
+  height: 100%;
+}
+
+:global(.hero-video-panel) {
+  margin-inline: auto;
+}
+
+:global(.hero-video) {
+  display: block;
+  inset: 0;
+  object-fit: cover;
+  object-position: center;
+  position: absolute;
+  width: 100%;
+}
+
+:global(.hero-video-shade) {
+  background: rgb(8 8 8 / .34);
+  inset: 0;
+  position: absolute;
+  width: 100%;
 }
 
 :global(.hero-layout) {
-  margin: auto;
+  margin: 0 auto;
   max-width: 1200px;
+  position: relative;
+  width: 100%;
+  z-index: 1;
+}
+
+:global(.hero-copy) {
+ text-align: center;
 }
 
 :global(.hero-copy h1) {
@@ -897,6 +950,8 @@
 }
 
 :global(.site-footer) {
+  background: var(--night);
+  border-top: 1px solid var(--border);
   color: var(--muted);
   padding: clamp(2.5rem, 5vw, 4rem) clamp(1rem, 7vw, 6.5rem) 1.25rem;
   width: 100%;
@@ -944,6 +999,14 @@
 :global(.footer-links a:hover),
 :global(.footer-bottom a:hover) {
   color: var(--text);
+}
+
+:global(.footer-links a:focus-visible),
+:global(.footer-bottom a:focus-visible) {
+  border-radius: 3px;
+  color: var(--text);
+  outline: 2px solid var(--accent);
+  outline-offset: 4px;
 }
 
 :global(.footer-bottom) {
@@ -1233,9 +1296,11 @@
 
   :global(.footer-bottom) {
     align-items: flex-start;
+    display: flex;
     flex-direction: column;
     gap: .75rem;
   }
+
 }
 
 :global(.hero-bottom > p) {
@@ -1646,18 +1711,18 @@
 
 :global(.hero-object-glass) {
   animation: hero-float-glass 10s ease-in-out infinite;
-  bottom: 1.5rem;
+  bottom: clamp(1.25rem, 3.5vw, 3rem);
   height: auto;
-  right: clamp(1.5rem, 5vw, 4.5rem);
+  right: clamp(1.25rem, 4vw, 3.75rem);
   transform: rotate(-13deg);
   width: 132px;
 }
 
 :global(.hero-object-arrow) {
   animation: hero-float-arrow 8s ease-in-out infinite;
-  bottom: 2.1rem;
+  bottom: clamp(1.25rem, 3.5vw, 3rem);
   height: auto;
-  left: clamp(2.5rem, 12vw, 10rem);
+  left: clamp(1.25rem, 5vw, 4.75rem);
   transform: rotate(-11deg);
   width: 104px;
 }
@@ -1721,18 +1786,8 @@
     min-height: auto;
   }
 
-  :global(.hero-object-lime) {
-    left: .8rem;
-    top: .45rem;
-    width: 54px;
-  }
-
-  :global(.hero-object-chrome) {
-    right: .85rem;
-    top: .55rem;
-    width: 60px;
-  }
-
+  :global(.hero-object-lime),
+  :global(.hero-object-chrome),
   :global(.hero-object-glass),
   :global(.hero-object-arrow),
   :global(.hero-object-label) {
@@ -1744,8 +1799,47 @@
   }
 }
 
+@media (prefers-reduced-motion: reduce) {
+  :global(.hero-video) {
+    display: none;
+  }
+
+  :global(.hero) {
+    background: var(--night);
+  }
+
+  :global(.hero-object) {
+    animation: none;
+  }
+}
+
 @media (min-width: 761px) {
   :global(.hero-copy h1) {
-    font-size: clamp(3.25rem, 5.8vw, 5rem);
+    font-size: clamp(3.25rem, 5.2vw, 4.65rem);
+    max-width: 1050px;
+  }
+}
+
+@media (max-width: 760px) {
+  :global(.hero-video-panel) {
+    border-radius: 1rem;
+    bottom: 1.25rem;
+    left: .75rem;
+    right: .75rem;
+    top: .75rem;
+  }
+
+  :global(.hero-video) {
+    object-position: 58% center;
+  }
+
+  :global(.hero-objects) {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :global(.hero-video-panel) {
+    background: radial-gradient(circle at center, #151515, var(--night) 72%);
   }
 }

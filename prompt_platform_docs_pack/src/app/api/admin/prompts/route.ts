@@ -4,6 +4,7 @@ import { requireAdmin } from "@/lib/auth/session";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { computeContentHash, slugify } from "@/lib/prompts/hash";
 import { logAdminAction } from "@/lib/admin/audit";
+import { isAllowedPreviewUrl, sanitizePreviewUrl } from "@/lib/prompts/preview-url";
 
 const promptWriteSchema = z.object({
   title: z.string().min(1).max(300),
@@ -12,6 +13,7 @@ const promptWriteSchema = z.object({
   prompt_text: z.string().min(1).max(50000),
   category_id: z.string().uuid().nullable().optional(),
   preview_image_url: z.string().url().max(2000).nullable().optional(),
+  preview_url: z.string().url().max(2000).nullable().optional(),
   status: z.enum(["draft", "pending_review", "published", "rejected", "archived"]).default("draft"),
   access_tier: z.enum(["free", "premium"]).default("free"),
   is_featured: z.boolean().default(false),
@@ -57,6 +59,9 @@ export async function POST(request: Request) {
   if (!parsed.success) return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 });
 
   const input = parsed.data;
+  if (input.preview_url && !isAllowedPreviewUrl(input.preview_url)) {
+    return NextResponse.json({ error: "Preview URL must use an approved HTTPS preview host." }, { status: 400 });
+  }
   const slug = input.slug?.trim() || slugify(input.title);
   const content_hash = computeContentHash(input.prompt_text);
   const published_at = input.status === "published" ? new Date().toISOString() : null;
@@ -70,6 +75,7 @@ export async function POST(request: Request) {
       prompt_text: input.prompt_text,
       category_id: input.category_id ?? null,
       preview_image_url: input.preview_image_url ?? null,
+      preview_url: sanitizePreviewUrl(input.preview_url),
       status: input.status,
       access_tier: input.access_tier,
       is_featured: input.is_featured,

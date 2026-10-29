@@ -23,7 +23,6 @@ export default function AdminPromptsPage() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    setLoading(true);
     const params = new URLSearchParams();
     if (q) params.set("q", q);
     if (status) params.set("status", status);

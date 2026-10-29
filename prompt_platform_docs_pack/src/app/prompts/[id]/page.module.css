@@ -48,6 +48,44 @@
   object-fit: cover;
 }
 
+.preview {
+  align-self: start;
+  aspect-ratio: 16 / 10;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  min-width: 0;
+  overflow: hidden;
+  position: relative;
+}
+
+.preview iframe {
+  border: 0;
+  height: 100%;
+  width: 100%;
+}
+
+.previewLink {
+  align-items: center;
+  background: var(--text);
+  border-radius: 7px;
+  bottom: .75rem;
+  color: var(--night);
+  display: inline-flex;
+  font-size: .82rem;
+  font-weight: 600;
+  gap: .35rem;
+  padding: .65rem .8rem;
+  position: absolute;
+  right: .75rem;
+}
+
+.previewLink:hover,
+.previewLink:focus-visible {
+  background: var(--accent);
+  color: var(--text);
+}
+
 .copy h1 {
   font-size: clamp(2.6rem, 5.5vw, 5rem);
   font-weight: 500;
@@ -160,6 +198,11 @@
 
   .artwork {
     aspect-ratio: 4 / 3;
+  }
+
+  .preview {
+    aspect-ratio: auto;
+    height: clamp(300px, 70vw, 480px);
   }
 }
 

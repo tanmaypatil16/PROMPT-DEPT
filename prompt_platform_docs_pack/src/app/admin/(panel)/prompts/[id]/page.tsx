@@ -27,6 +27,7 @@ export default function EditPromptPage() {
           prompt_text: p.prompt_text,
           category_id: p.category_id ?? "",
           preview_image_url: p.preview_image_url ?? "",
+          preview_url: p.preview_url ?? "",
           status: p.status,
           access_tier: p.access_tier,
           is_featured: p.is_featured,

@@ -6,6 +6,7 @@ export type PromptSample = {
   description: string;
   prompt: string;
   image: string;
+  preview_url?: string | null;
   premium?: boolean;
   aspect: "portrait" | "landscape" | "square";
 };

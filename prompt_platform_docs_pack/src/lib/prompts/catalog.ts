@@ -1,6 +1,7 @@
 import { createAdminClient } from "@/lib/supabase/admin";
 import type { PromptSample } from "@/data/prompts";
 import { userHasPremiumAccess } from "@/lib/auth/entitlements";
+import { sanitizePreviewUrl } from "@/lib/prompts/preview-url";
 
 type DbPromptRow = {
   id: string;
@@ -9,6 +10,7 @@ type DbPromptRow = {
   description: string;
   prompt_text: string;
   preview_image_url: string | null;
+  preview_url?: string | null;
   access_tier: string;
   is_featured: boolean;
   categories: { name: string; slug: string } | null;
@@ -29,9 +31,23 @@ function mapRowToSample(row: DbPromptRow, includePremiumText: boolean): PromptSa
       ? "This is a premium prompt. Sign in with an active subscription to view the full text."
       : row.prompt_text,
     image: row.preview_image_url ?? "/figma-assets/gallery-study.svg",
+    preview_url: sanitizePreviewUrl(row.preview_url),
     premium: premium || undefined,
     aspect: "landscape",
   };
+}
+
+async function mapPublishedRows(rows: DbPromptRow[], query: string | undefined, userId: string | null) {
+  const premiumAccess = await userHasPremiumAccess(userId);
+  let prompts = rows.map((row) => mapRowToSample(row, premiumAccess));
+  const search = query?.trim().toLowerCase();
+  if (search) {
+    prompts = prompts.filter((p) => {
+      const hay = [p.title, p.category, p.description, ...p.tags].join(" ").toLowerCase();
+      return hay.includes(search);
+    });
+  }
+  return { prompts, source: "database" };
 }
 
 export async function listPublishedPrompts(options: {
@@ -45,7 +61,7 @@ export async function listPublishedPrompts(options: {
   let q = admin
     .from("prompts")
     .select(`
-      id, slug, title, description, prompt_text, preview_image_url, access_tier, is_featured,
+      id, slug, title, description, prompt_text, preview_image_url, preview_url, access_tier, is_featured,
       categories ( name, slug ),
       prompt_tags ( tags ( name ) )
     `)
@@ -72,7 +88,19 @@ export async function listPublishedPrompts(options: {
   }
 
   const { data, error } = await q.limit(200);
-  if (error || !data) return { prompts: [], source: "database" };
+  if (error) {
+    const retry = admin
+      .from("prompts")
+      .select(`id, slug, title, description, prompt_text, preview_image_url, access_tier, is_featured, categories ( name, slug ), prompt_tags ( tags ( name ) )`)
+      .eq("status", "published")
+      .eq("visibility", "public")
+      .order("published_at", { ascending: false, nullsFirst: false })
+      .limit(200);
+    const fallback = await retry;
+    if (fallback.error || !fallback.data) return { prompts: [], source: "database" };
+    return await mapPublishedRows(fallback.data as unknown as DbPromptRow[], options.query, options.userId ?? null);
+  }
+  if (!data) return { prompts: [], source: "database" };
 
   const premiumAccess = await userHasPremiumAccess(options.userId ?? null);
   let prompts = (data as unknown as DbPromptRow[]).map((row) => mapRowToSample(row, premiumAccess));
@@ -94,7 +122,7 @@ export async function getPublishedPromptBySlug(slug: string, userId?: string | n
   const { data, error } = await admin
     .from("prompts")
     .select(`
-      id, slug, title, description, prompt_text, preview_image_url, access_tier,
+      id, slug, title, description, prompt_text, preview_image_url, preview_url, access_tier,
       categories ( name, slug ),
       prompt_tags ( tags ( name ) )
     `)
@@ -102,7 +130,23 @@ export async function getPublishedPromptBySlug(slug: string, userId?: string | n
     .eq("status", "published")
     .eq("visibility", "public")
     .maybeSingle();
-  if (error || !data) return null;
+  if (error) {
+    const fallback = await admin
+      .from("prompts")
+      .select(`id, slug, title, description, prompt_text, preview_image_url, access_tier, categories ( name, slug ), prompt_tags ( tags ( name ) )`)
+      .eq("slug", slug)
+      .eq("status", "published")
+      .eq("visibility", "public")
+      .maybeSingle();
+    if (fallback.error || !fallback.data) return null;
+    const premiumAccess = await userHasPremiumAccess(userId ?? null);
+    return {
+      prompt: mapRowToSample(fallback.data as unknown as DbPromptRow, premiumAccess),
+      dbId: (fallback.data as { id: string }).id,
+      source: "database" as const,
+    };
+  }
+  if (!data) return null;
   const premiumAccess = await userHasPremiumAccess(userId ?? null);
   return {
     prompt: mapRowToSample(data as unknown as DbPromptRow, premiumAccess),
